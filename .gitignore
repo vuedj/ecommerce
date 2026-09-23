@@ -1,0 +1,12 @@
+.idea/
+.vscode/
+.atom/
+**/__pycache__/
+node_modules/
+env/
+venv/
+.env/
+.venv/
+static_cdn/
+*.env
+*.pyc
