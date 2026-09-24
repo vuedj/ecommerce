@@ -45,9 +45,13 @@ def get_categories(request):
 
 @api_view(["GET"])
 def get_cart(request):
-    cart, _ = Cart.objects.get_or_create(user=request.user)
-    serializer = CartSerializer(cart)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    cart = Cart.objects.filter(user=request.user).first()
+
+    if cart:
+        serializer = CartSerializer(cart)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response({"error": "Cart is empty"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(["POST"])
@@ -95,8 +99,10 @@ def remove_from_cart(request):
 
 @api_view(["POST"])
 def create_order(request):
-    try:
-        # Get user's cart
+    # Get user's cart
+    cart = Cart.objects.filter(user=request.user)
+
+    if cart.exists():
         cart = Cart.objects.get(user=request.user)
         order = Order.objects.create(user=request.user, total_amount=cart.total)
 
@@ -112,7 +118,7 @@ def create_order(request):
         cart.items.all().delete()
         return Response({"message": "Order created successfully", "order_id": order.id})
 
-    except Cart.DoesNotExist:
+    else:
         return Response({"error": "Cart is empty"}, status=500)
 
 

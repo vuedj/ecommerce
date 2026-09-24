@@ -1,0 +1,91 @@
+@baseURL = http://127.0.0.1:8000/api
+
+###
+GET {{baseURL}}/categories/
+Content-Type: application/json
+
+###
+GET {{baseURL}}/products/
+Content-Type: application/json
+
+###
+GET {{baseURL}}/products/4
+Content-Type: application/json
+
+###
+POST {{baseURL}}/register/
+Content-Type: application/json
+
+{
+  "username": "a",
+	"email": "a@a.com",
+  "password": "1234",
+  "password2": "1234"
+}
+
+###
+# @name loginRequest
+POST {{baseURL}}/token/
+Content-Type: application/json
+
+{
+  "username": "a",
+  "password": "1234"
+}
+
+###
+# @name refreshRequest
+POST {{baseURL}}/token/refresh/
+Content-Type: application/json
+
+{
+	"refresh": "{{loginRequest.response.body.refresh}}"
+}
+
+###
+@accessToken = {{refreshRequest.response.body.access}}
+@accessToken = {{loginRequest.response.body.access}}
+
+###
+GET {{baseURL}}/cart/
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+POST {{baseURL}}/cart/add/
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+	"product_id": 2
+}
+
+###
+POST {{baseURL}}/cart/update/
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+	"item_id": 1,
+	"quantity": 10
+}
+
+###
+POST {{baseURL}}/cart/remove/
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+	"item_id": 1
+}
+
+###
+POST {{baseURL}}/orders/create/
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+	"item_id": 1
+}
+
+###
